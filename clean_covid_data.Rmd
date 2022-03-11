@@ -1,0 +1,57 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r, message = F}
+# load packages
+library(tidyverse)
+library(lubridate) # for dealing with dates
+```
+
+
+Code to clean daily coronavirus data from California.  The data comes from The COVID Tracking Project:
+
+https://covidtracking.com/data/api
+
+The data set was used for a HW problem in STAT 452.
+
+```{r, message = F}
+# read in in CSV file directly from website 
+covid_state <- read_csv("https://api.covidtracking.com/v1/states/ca/daily.csv")
+```
+
+```{r}
+# parse date column
+covid_ca <- covid_state %>% 
+  filter(state == "CA") %>%
+  select(state, daily_cases = positiveIncrease, date) %>%
+  mutate(date = ymd(date)) %>%
+  mutate(year = year(date)) %>%
+  mutate(month = month(date)) %>%
+  mutate(yday = yday(date))
+```
+
+```{r}
+# subset data for 2021
+covid_ca2021 <- covid_ca %>% filter(year == 2021)
+```
+
+```{r}
+# look at first 5 entries
+covid_ca2021 %>% slice_head(n=5)
+```
+
+
+```{r}
+# look at last 5 entries
+covid_ca2021 %>% slice_tail(n=5)
+```
+
+```{r}
+# write data set to file
+# saveRDS(covid_ca2021, "covid_ca2021.rds")
+```
+
+
